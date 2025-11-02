@@ -36,28 +36,16 @@ function useLocalStorage(key, initialValue) {
   return [state, setState];
 }
 
-/* ---------- Helper: extract Spotify Track ID ----------
-Spotify track URLs come in forms like:
-- https://open.spotify.com/track/{TRACK_ID}
-- spotify:track:{TRACK_ID}
-This function tries to parse common variants and return the TRACK_ID or null.
-*/
 function extractSpotifyId(urlOrUri) {
   if (!urlOrUri) return null;
-  // track ID is 22 characters (letters, numbers, - and _ sometimes)
-  const trackRegex = /(?:track[/:])([A-Za-z0-9]{22,})/i; // relaxed length
+  const trackRegex = /(?:track[/:])([A-Za-z0-9]{22,})/i;
   const match = urlOrUri.match(trackRegex);
   if (match) return match[1];
-  // fallback: sometimes people paste full embed or URI
   const idOnly = urlOrUri.trim();
   if (/^[A-Za-z0-9]{22,}$/.test(idOnly)) return idOnly;
   return null;
 }
 
-/* ---------- Component: EntryForm ----------
-Form for adding a new entry. Controlled components: we keep the input values
-in state and call `onAdd` with a new entry object when submitted.
-*/
 function EntryForm({ onAdd }) {
   const [link, setLink] = useState("");
   const [note, setNote] = useState("");
@@ -161,10 +149,6 @@ async function handleSubmit(e) {
   );
 }
 
-/* ---------- Component: EntryCard ----------
-Displays a single entry. If a spotify ID exists, we embed the Spotify player.
-We also show the note and a formatted date.
-*/
 function EntryCard({ entry }) {
   const date = new Date(entry.date);
   const pretty = date.toLocaleString();
@@ -196,15 +180,10 @@ function EntryCard({ entry }) {
   );
 }
 
-/* ---------- Main App ----------
-We keep entries in localStorage. We show the form, today's entry (if any), and history.
-*/
 export default function App() {
-  // useLocalStorage returns [value, setValue]
   const [entries, setEntries] = useLocalStorage("songJournal.entries", []);
 
   function addEntry(entry) {
-    // Add to the start of the array so newest appear first
     setEntries([entry, ...entries]);
   }
 
@@ -213,7 +192,6 @@ export default function App() {
     setEntries([]);
   }
 
-  // optional: find the latest entry for 'today' (same calendar date)
   const todayStr = new Date().toDateString();
   const todayEntry = entries.find((e) => new Date(e.date).toDateString() === todayStr);
 
