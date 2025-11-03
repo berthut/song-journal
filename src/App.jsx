@@ -133,7 +133,7 @@ async function handleSubmit(e) {
       </label>
 
       <label>
-        Why this song reflects today (short)
+        Why this song reflects today
         <textarea
           rows={3}
           placeholder="A sentence or two — what's the vibe?"
@@ -157,7 +157,13 @@ function EntryCard({ entry }) {
     <div className="entry-card">
       <div className="entry-meta">
         <div className="entry-date">{pretty}</div>
-        {entry.mood && <div className="entry-mood">{entry.mood}</div>}
+        {entry.mood && (
+          <div className="entry-mood">
+            {entry.mood.split(",").map((m, i) => (
+              <span key={i} className="mood-tag">{m.trim()}</span>
+          ))}
+          </div>
+        )}
       </div>
 
       {entry.spotifyId ? (
